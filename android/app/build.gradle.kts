@@ -8,7 +8,9 @@ plugins {
 android {
     namespace = "com.example.vibely"
     compileSdk = flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion
+
+    // ✅ Fix: Set required NDK version for flutter_web_auth_2 and url_launcher
+    ndkVersion = "27.0.12077973"
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11

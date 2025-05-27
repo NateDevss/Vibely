@@ -10,7 +10,6 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  flutter_web_auth_2: ^2.0.3
   http: ^0.13.5
   url_launcher: ^6.2.5
 

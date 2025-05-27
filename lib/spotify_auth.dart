@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:flutter_web_auth/flutter_web_auth.dart';
+import 'package:flutter_web_auth_2/flutter_web_auth_2.dart';
 import 'package:http/http.dart' as http;
 
 class SpotifyAuth {
@@ -18,7 +18,7 @@ class SpotifyAuth {
         'https://accounts.spotify.com/authorize?response_type=code&client_id=$clientId&redirect_uri=$redirectUri&scope=${scopes.join('%20')}';
 
     try {
-      final result = await FlutterWebAuth.authenticate(
+      final result = await FlutterWebAuth2.authenticate(
         url: authUrl,
         callbackUrlScheme: 'http',
       );

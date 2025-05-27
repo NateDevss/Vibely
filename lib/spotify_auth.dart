@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:flutter_web_auth_2/flutter_web_auth_2.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:http/http.dart' as http;
 
 class SpotifyAuth {
@@ -17,32 +17,31 @@ class SpotifyAuth {
     final authUrl =
         'https://accounts.spotify.com/authorize?response_type=code&client_id=$clientId&redirect_uri=$redirectUri&scope=${scopes.join('%20')}';
 
-    try {
-      final result = await FlutterWebAuth2.authenticate(
-        url: authUrl,
-        callbackUrlScheme: 'http',
-      );
-
-      final code = Uri.parse(result).queryParameters['code'];
-      if (code == null) return 'Authorization failed.';
-
-      final tokenResponse = await http.post(
-        Uri.parse('https://accounts.spotify.com/api/token'),
-        headers: {
-          'Authorization': 'Basic ${base64Encode(utf8.encode('$clientId:$clientSecret'))}',
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: {
-          'grant_type': 'authorization_code',
-          'code': code,
-          'redirect_uri': redirectUri,
-        },
-      );
-
-      final tokenJson = json.decode(tokenResponse.body);
-      return 'Logged in! Token: ${tokenJson['access_token']}';
-    } catch (e) {
-      return 'Login error: $e';
+    final url = Uri.parse(authUrl);
+    if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
+      return 'Could not launch Spotify login';
     }
+
+    // Simulate waiting for redirect and extracting the code manually
+    // In production, use a local server or app deep linking to capture the redirect
+    return 'Redirect handled outside of app. Implement deep linking to complete login.';
+  }
+
+  static Future<String?> exchangeCodeForToken(String code) async {
+    final tokenResponse = await http.post(
+      Uri.parse('https://accounts.spotify.com/api/token'),
+      headers: {
+        'Authorization': 'Basic ${base64Encode(utf8.encode('$clientId:$clientSecret'))}',
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: {
+        'grant_type': 'authorization_code',
+        'code': code,
+        'redirect_uri': redirectUri,
+      },
+    );
+
+    final tokenJson = json.decode(tokenResponse.body);
+    return 'Logged in! Token: ${tokenJson['access_token']}';
   }
 }
